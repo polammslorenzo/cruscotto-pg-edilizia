@@ -5670,6 +5670,8 @@ function leggiWorkspace(){
   try{ const w=(localStorage.getItem(WORKSPACE)||'').trim(); if(w) return w; }catch(e){}
   return workspaceSessione;
 }
+/* modello usato per rifinitura, didascalie e descrizione opere */
+const MODELLO_IA='claude-opus-5-5';
 function intestazioniAPI(chiave){
   const h={'content-type':'application/json','x-api-key':chiave,
            'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
@@ -5746,7 +5748,7 @@ async function didascalieIA(){
     const r=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:intestazioniAPI(chiave),
-      body:JSON.stringify({model:'claude-sonnet-4-6', max_tokens:2000,
+      body:JSON.stringify({model:MODELLO_IA, max_tokens:2000,
         system:ISTRUZIONI, messages:[{role:'user', content:contenuto}]})
     });
     if(!r.ok) throw new Error(await erroreAPI(r));
@@ -5909,7 +5911,7 @@ async function rifinisciTesto(){
     const r=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:intestazioniAPI(chiave),
-      body:JSON.stringify({model:'claude-sonnet-4-6', max_tokens:8000,
+      body:JSON.stringify({model:MODELLO_IA, max_tokens:8000,
         system:REGOLE_ANN,
         messages:[{role:'user', content:(contesto?contesto+'\n\n':'')+'Testo da rifinire:\n\n'+testo}]})
     });
@@ -6232,7 +6234,7 @@ async function descriviOpere(){
     const r=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:intestazioniAPI(chiave),
-      body:JSON.stringify({model:'claude-sonnet-4-6', max_tokens:4000,
+      body:JSON.stringify({model:MODELLO_IA, max_tokens:4000,
         system:REGOLE_SOP, messages:[{role:'user', content:contenuto}]})
     });
     if(!r.ok) throw new Error(await erroreAPI(r));
